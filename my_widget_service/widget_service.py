@@ -12,7 +12,7 @@ class WidgetService(Construct):
         bucket = s3.Bucket(self, "WidgetStore")
 
         handler = lambda_.Function(self, "WidgetHandler",
-                    runtime=lambda_.Runtime.NODEJS_18_X,
+                    runtime=lambda_.Runtime.NODEJS_14_X,
                     code = lambda_.Code.from_asset("resources"),
                     handler="widgets.main",
                     environment=dict(
