@@ -35,11 +35,65 @@ exports.main = async function(event, context) {
             }
         }
 
+        if(method === "POST") {
+            // POST /name
+            // Return error if we do not have a name
+            if (!widgetName) {
+                return {
+                    statusCode: 400,
+                    headers: {},
+                    body: "Widget name missing"
+                };
+            }
+        }
+            //Create some dummy data to populate object
+            const now = new Date();
+            var data = widgetName + " created: " + now;
+
+            var base64data = new Buffer(data, 'binary');
+
+            await S3.putObject({
+                Bucket: bucketName,
+                key: widgetName,
+                Body: base64data,
+                ContentType: 'application/json'
+            }).promise();
+
+            return {
+                statusCode: 200,
+                headers: {},
+                body: data
+            }
+
+        if (method === "DELETE") {
+            // DELETE /name
+            //Return an error if we don't have a name
+            if(!widgetName) {
+                return {
+                    statusCode: 400,
+                    headers: {},
+                    body: "Widget name missing"
+                };
+            }
+
+            await S3.deleteObject({
+                Bucket: bucketName,
+                Key:widgetName
+            }).promise();
+
+            return {
+                statusCode:200,
+                headers: {},
+                body: "Successfully deleted widget " + widgetName
+            };
+        }
+        
+
         // We only accept GET for now
         return {
             statusCode: 400,
             headers: {},
-            body: "We only accept GET /"
+            body: "We only accept GET, POST, and DELETE, not " + method
         };
     } catch(error) {
         var body = error.stack || JSON.stringify(error, null, 2);
