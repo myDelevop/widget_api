@@ -13,7 +13,7 @@ exports.main = async function(event, context) {
             if(event.path === "/") {
                 const data = await S3.listObjectsV2( { Bucket: bucketName}).promise();
                 var body = {
-                    widgets: data.Contents.map(function(e) { return e.key} )
+                    widgets: data.Contents.map(function(e) { return e.Key} )
                 };
                 return {
                     statusCode: 200,
@@ -45,7 +45,7 @@ exports.main = async function(event, context) {
                     body: "Widget name missing"
                 };
             }
-        }
+        
             //Create some dummy data to populate object
             const now = new Date();
             var data = widgetName + " created: " + now;
@@ -54,7 +54,7 @@ exports.main = async function(event, context) {
 
             await S3.putObject({
                 Bucket: bucketName,
-                key: widgetName,
+                Key: widgetName,
                 Body: base64data,
                 ContentType: 'application/json'
             }).promise();
@@ -64,7 +64,9 @@ exports.main = async function(event, context) {
                 headers: {},
                 body: data
             }
+        }
 
+        
         if (method === "DELETE") {
             // DELETE /name
             //Return an error if we don't have a name
