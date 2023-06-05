@@ -5,6 +5,7 @@ const bucketName = process.env.BUCKET;
 
 exports.main = async function(event, context) {
     try {
+        var method = event.httpMethod;
         //Get name if present
         var widgetName = event.path.startsWith('/') ? event.path.substring(1) : event.path;
 
